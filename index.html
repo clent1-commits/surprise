@@ -2,8 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>For You 💌</title>
-
+<title>Surprise Envelope 💌</title>
 <style>
 body {
   margin: 0;
@@ -16,21 +15,27 @@ body {
   font-family: 'Segoe UI', sans-serif;
 }
 
+/* Envelope container */
 .envelope {
   width: 280px;
   height: 180px;
-  background: white;
   position: relative;
   cursor: pointer;
+  perspective: 600px;
+}
+
+/* Envelope body */
+.envelope-body {
+  width: 100%;
+  height: 100%;
+  background: white;
   border-radius: 10px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-  transition: transform 0.5s ease;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+  position: relative;
+  overflow: hidden;
 }
 
-.envelope:hover {
-  transform: scale(1.05);
-}
-
+/* Envelope flap */
 .flap {
   position: absolute;
   top: -90px;
@@ -40,15 +45,16 @@ body {
   border-left: 140px solid transparent;
   border-right: 140px solid transparent;
   border-bottom: 90px solid #ff9ecf;
-  transition: 1s;
   transform-origin: top;
+  transition: 1s;
 }
 
+/* Paper inside */
 .paper {
   position: absolute;
   width: 240px;
   height: 160px;
-  background: #fff;
+  background: white;
   top: 10px;
   left: 20px;
   border-radius: 8px;
@@ -59,17 +65,34 @@ body {
   transition: 1s;
   opacity: 0;
   font-size: 14px;
+  line-height: 1.4;
 }
 
+/* Center heart when envelope closed */
+.center-heart {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 40px;
+  transform: translate(-50%, -50%);
+  transition: 0.8s;
+  pointer-events: none;
+}
+
+/* When envelope opens */
 .open .flap {
   transform: rotateX(180deg);
 }
-
 .open .paper {
   transform: translateY(-140px);
   opacity: 1;
 }
+.open .center-heart {
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+}
 
+/* Flying hearts */
 .heart {
   position: absolute;
   font-size: 22px;
@@ -89,8 +112,11 @@ body {
 </audio>
 
 <div class="envelope" onclick="openEnvelope(this)">
-  <div class="flap"></div>
-  <div class="paper" id="message"></div>
+  <div class="envelope-body">
+    <div class="flap"></div>
+    <div class="paper" id="message"></div>
+    <div class="center-heart">💖</div>
+  </div>
 </div>
 
 <script>
