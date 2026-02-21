@@ -2,92 +2,88 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Envelope Surprise 💌</title>
+<title>Love Letter 💌</title>
 <style>
 body {
   margin: 0;
   height: 100vh;
-  background: linear-gradient(135deg, #ffd6e8, #ffeef5);
+  background: #f9f0f5;
   display: flex;
   justify-content: center;
   align-items: center;
   font-family: 'Segoe UI', sans-serif;
-  overflow: hidden;
 }
 
 /* Envelope container */
 .envelope-container {
   position: relative;
-  width: 250px;
-  height: 150px;
-  cursor: pointer;
-  perspective: 800px;
+  width: 280px;
+  height: 180px;
 }
 
-/* Envelope body rectangle */
-.envelope-body {
-  position: absolute;
-  bottom: 0;
+/* Envelope body */
+.envelope {
+  position: relative;
   width: 100%;
-  height: 100px;
-  background: #fff;
-  border: 2px solid #ff9ecf;
+  height: 120px;
+  background: #ff7f91;
   border-radius: 6px;
+  overflow: hidden;
   box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-  z-index: 1;
+  cursor: pointer;
 }
 
-/* Envelope flap triangle */
+/* Flap */
 .envelope-flap {
   position: absolute;
-  top: 0;
+  top: -60px;
   left: 0;
   width: 0;
   height: 0;
-  border-left: 125px solid transparent;
-  border-right: 125px solid transparent;
-  border-bottom: 80px solid #ff9ecf;
-  transform-origin: top;
+  border-left: 140px solid transparent;
+  border-right: 140px solid transparent;
+  border-bottom: 60px solid #ff4f6d;
   transition: transform 0.8s ease;
+  transform-origin: top;
   z-index: 2;
 }
 
-/* Center heart on envelope */
+/* Paper inside */
+.paper {
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  width: 240px;
+  height: 140px;
+  background: #fff;
+  border-radius: 6px;
+  padding: 15px;
+  box-sizing: border-box;
+  text-align: center;
+  transform: translateY(120px);
+  transition: transform 0.8s ease, opacity 0.8s ease;
+  opacity: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  z-index: 1;
+}
+
+/* Heart on envelope */
 .envelope-heart {
   position: absolute;
-  top: 40px;
+  top: 45px;
   left: 50%;
   transform: translateX(-50%);
   font-size: 36px;
   z-index: 3;
-  pointer-events: none;
   animation: pulse 1.2s infinite;
+  pointer-events: none;
 }
 
 @keyframes pulse {
   0% { transform: translateX(-50%) scale(1); }
   50% { transform: translateX(-50%) scale(1.2); }
   100% { transform: translateX(-50%) scale(1); }
-}
-
-/* Paper inside envelope */
-.paper {
-  position: absolute;
-  width: 220px;
-  height: 140px;
-  top: 5px;
-  left: 15px;
-  background: #fff;
-  border-radius: 6px;
-  padding: 15px;
-  box-sizing: border-box;
-  text-align: center;
-  transform: translateY(150px);
-  transition: transform 1s ease, opacity 1s ease;
-  opacity: 0;
-  font-size: 14px;
-  line-height: 1.4;
-  z-index: 1;
 }
 
 /* Flying hearts */
@@ -107,12 +103,32 @@ body {
   transform: rotateX(180deg);
 }
 .envelope-container.open .envelope-heart {
-  transform: translateX(-50%) scale(0);
   opacity: 0;
+  transform: scale(0);
 }
 .envelope-container.open .paper {
   transform: translateY(-20px);
   opacity: 1;
+}
+
+/* Buttons */
+.buttons {
+  margin-top: 20px;
+  text-align: center;
+}
+
+button {
+  background: #ff7f91;
+  color: #fff;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 6px;
+  margin: 0 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+button:hover {
+  background: #ff4f6d;
 }
 </style>
 </head>
@@ -122,11 +138,17 @@ body {
   <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_7d1c6e2e0b.mp3" type="audio/mpeg">
 </audio>
 
-<div class="envelope-container" onclick="openEnvelope(this)">
+<div class="envelope-container" id="envelope">
   <div class="envelope-flap"></div>
-  <div class="envelope-body"></div>
-  <div class="envelope-heart">💖</div>
-  <div class="paper" id="message"></div>
+  <div class="envelope">
+    <div class="envelope-heart">💖</div>
+    <div class="paper" id="message"></div>
+  </div>
+</div>
+
+<div class="buttons">
+  <button onclick="openEnvelope()">Open</button>
+  <button onclick="closeEnvelope()">Close</button>
 </div>
 
 <script>
@@ -135,22 +157,21 @@ function getName() {
   return params.get("name") || "Beautiful Soul";
 }
 
-function openEnvelope(el) {
-  if(el.classList.contains("open")) return;
+function openEnvelope() {
+  const el = document.getElementById('envelope');
   el.classList.add("open");
   document.getElementById("bgMusic").play();
 
   const name = getName();
   document.getElementById("message").innerHTML = `
     💌 For ${name}, <br><br>
-    Surprise!!! 💖 <br><br>
-    Thank you for supporting me,<br>
-    reacting to my stories,<br>
-    and being part of my life.<br><br>
-    You are appreciated more than<br>
-    you will ever know ✨
+    Dear crush, you are so beautiful.<br>
+    Every time I see you,<br>
+    my world stops.<br><br>
+    You are amazing ✨
   `;
 
+  // Flying hearts
   for(let i=0; i<25; i++) {
     let heart = document.createElement("div");
     heart.className = "heart";
@@ -160,6 +181,11 @@ function openEnvelope(el) {
     document.body.appendChild(heart);
     setTimeout(() => heart.remove(), 5000);
   }
+}
+
+function closeEnvelope() {
+  const el = document.getElementById('envelope');
+  el.classList.remove("open");
 }
 </script>
 
