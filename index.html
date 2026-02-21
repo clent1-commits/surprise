@@ -9,12 +9,14 @@
 body {
   margin: 0;
   height: 100vh;
+  width: 100vw;
   background: linear-gradient(135deg, #ffe4f0, #fff0f8);
   display: flex;
   justify-content: center;
   align-items: center;
   font-family: 'Segoe UI', sans-serif;
   overflow: hidden;
+  position: relative;
 }
 
 /* Floating card */
@@ -31,6 +33,10 @@ body {
   transition: transform 0.8s cubic-bezier(0.25, 1.5, 0.5, 1);
   position: relative;
   z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Show card */
@@ -115,12 +121,15 @@ button:hover {
   <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_7d1c6e2e0b.mp3" type="audio/mpeg">
 </audio>
 
-<div class="card" id="card">
-  <div class="heart">💖</div>
-  <div id="message"></div>
-</div>
+<!-- Centered container -->
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+  <div class="card" id="card">
+    <div class="heart">💖</div>
+    <div id="message"></div>
+  </div>
 
-<button onclick="showCard()">Open Surprise</button>
+  <button onclick="showCard()">Open Surprise</button>
+</div>
 
 <script>
 // Get name from URL
