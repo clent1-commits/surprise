@@ -2,133 +2,110 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Love Letter 💌</title>
+<title>Surprise Card 💌</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
+/* Body & background */
 body {
   margin: 0;
   height: 100vh;
-  background: #f9f0f5;
+  background: linear-gradient(135deg, #ffe4f0, #fff0f8);
   display: flex;
   justify-content: center;
   align-items: center;
   font-family: 'Segoe UI', sans-serif;
-}
-
-/* Envelope container */
-.envelope-container {
-  position: relative;
-  width: 280px;
-  height: 180px;
-}
-
-/* Envelope body */
-.envelope {
-  position: relative;
-  width: 100%;
-  height: 120px;
-  background: #ff7f91;
-  border-radius: 6px;
   overflow: hidden;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-  cursor: pointer;
 }
 
-/* Flap */
-.envelope-flap {
-  position: absolute;
-  top: -60px;
-  left: 0;
-  width: 0;
-  height: 0;
-  border-left: 140px solid transparent;
-  border-right: 140px solid transparent;
-  border-bottom: 60px solid #ff4f6d;
-  transition: transform 0.8s ease;
-  transform-origin: top;
-  z-index: 2;
-}
-
-/* Paper inside */
-.paper {
-  position: absolute;
-  top: 10px;
-  left: 20px;
-  width: 240px;
-  height: 140px;
+/* Floating card */
+.card {
+  width: 90%;
+  max-width: 320px;
+  min-height: 180px;
   background: #fff;
-  border-radius: 6px;
-  padding: 15px;
-  box-sizing: border-box;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.15);
   text-align: center;
-  transform: translateY(120px);
-  transition: transform 0.8s ease, opacity 0.8s ease;
-  opacity: 0;
-  font-size: 14px;
-  line-height: 1.5;
-  z-index: 1;
+  padding: 25px 20px;
+  transform: scale(0);
+  transition: transform 0.8s cubic-bezier(0.25, 1.5, 0.5, 1);
+  position: relative;
+  z-index: 10;
 }
 
-/* Heart on envelope */
-.envelope-heart {
-  position: absolute;
-  top: 45px;
-  left: 50%;
-  transform: translateX(-50%);
+/* Show card */
+.card.show {
+  transform: scale(1);
+  animation: bounce 0.8s;
+}
+
+/* Bounce animation */
+@keyframes bounce {
+  0% { transform: scale(0.8); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Heart inside card */
+.card .heart {
   font-size: 36px;
-  z-index: 3;
   animation: pulse 1.2s infinite;
-  pointer-events: none;
+  margin-bottom: 15px;
 }
 
 @keyframes pulse {
-  0% { transform: translateX(-50%) scale(1); }
-  50% { transform: translateX(-50%) scale(1.2); }
-  100% { transform: translateX(-50%) scale(1); }
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
 }
 
-/* Flying hearts */
-.heart {
-  position: absolute;
-  font-size: 22px;
-  animation: float 5s linear forwards;
-}
-
-@keyframes float {
-  from { transform: translateY(0); opacity: 1; }
-  to { transform: translateY(-700px); opacity: 0; }
-}
-
-/* Open state */
-.envelope-container.open .envelope-flap {
-  transform: rotateX(180deg);
-}
-.envelope-container.open .envelope-heart {
-  opacity: 0;
-  transform: scale(0);
-}
-.envelope-container.open .paper {
-  transform: translateY(-20px);
-  opacity: 1;
-}
-
-/* Buttons */
-.buttons {
-  margin-top: 20px;
-  text-align: center;
-}
-
+/* Button */
 button {
   background: #ff7f91;
-  color: #fff;
+  color: white;
   border: none;
-  padding: 8px 20px;
-  border-radius: 6px;
-  margin: 0 5px;
+  border-radius: 12px;
+  padding: 12px 25px;
+  font-size: 16px;
   cursor: pointer;
-  font-size: 14px;
+  margin-top: 20px;
+  position: relative;
+  z-index: 20;
 }
 button:hover {
   background: #ff4f6d;
+}
+
+/* Sparkles */
+.sparkle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: #fff8f0;
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  animation: sparkleAnim 2s linear infinite;
+  box-shadow: 0 0 8px #ff9ecf;
+}
+
+@keyframes sparkleAnim {
+  0% { opacity: 0; transform: translateY(0) scale(0.5); }
+  50% { opacity: 1; transform: translateY(-20px) scale(1.2); }
+  100% { opacity: 0; transform: translateY(-40px) scale(0.5); }
+}
+
+/* Flying hearts/confetti */
+.heart-fly {
+  position: absolute;
+  font-size: 22px;
+  animation: float 5s linear forwards;
+  pointer-events: none;
+}
+
+@keyframes float {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(-700px) rotate(360deg); opacity: 0; }
 }
 </style>
 </head>
@@ -138,54 +115,56 @@ button:hover {
   <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_7d1c6e2e0b.mp3" type="audio/mpeg">
 </audio>
 
-<div class="envelope-container" id="envelope">
-  <div class="envelope-flap"></div>
-  <div class="envelope">
-    <div class="envelope-heart">💖</div>
-    <div class="paper" id="message"></div>
-  </div>
+<div class="card" id="card">
+  <div class="heart">💖</div>
+  <div id="message"></div>
 </div>
 
-<div class="buttons">
-  <button onclick="openEnvelope()">Open</button>
-  <button onclick="closeEnvelope()">Close</button>
-</div>
+<button onclick="showCard()">Open Surprise</button>
 
 <script>
+// Get name from URL
 function getName() {
   const params = new URLSearchParams(window.location.search);
   return params.get("name") || "Beautiful Soul";
 }
 
-function openEnvelope() {
-  const el = document.getElementById('envelope');
-  el.classList.add("open");
+// Show card
+function showCard() {
+  const card = document.getElementById('card');
+  card.classList.add("show");
   document.getElementById("bgMusic").play();
 
   const name = getName();
   document.getElementById("message").innerHTML = `
     💌 For ${name}, <br><br>
-    Dear crush, you are so beautiful.<br>
-    Every time I see you,<br>
-    my world stops.<br><br>
-    You are amazing ✨
+    Surprise! ✨ <br>
+    Thank you for being amazing,<br>
+    for your support, and your kindness.<br>
+    You are appreciated more than you know! 💖
   `;
 
-  // Flying hearts
+  // Floating hearts/confetti
   for(let i=0; i<25; i++) {
     let heart = document.createElement("div");
-    heart.className = "heart";
+    heart.className = "heart-fly";
     heart.innerHTML = "💖";
     heart.style.left = Math.random() * window.innerWidth + "px";
     heart.style.top = window.innerHeight + "px";
+    heart.style.fontSize = (12 + Math.random()*16) + "px";
     document.body.appendChild(heart);
     setTimeout(() => heart.remove(), 5000);
   }
-}
 
-function closeEnvelope() {
-  const el = document.getElementById('envelope');
-  el.classList.remove("open");
+  // Sparkles
+  for(let i=0; i<30; i++) {
+    let sparkle = document.createElement("div");
+    sparkle.className = "sparkle";
+    sparkle.style.left = Math.random() * window.innerWidth + "px";
+    sparkle.style.top = Math.random() * window.innerHeight + "px";
+    document.body.appendChild(sparkle);
+    setTimeout(() => sparkle.remove(), 2000 + Math.random()*3000);
+  }
 }
 </script>
 
