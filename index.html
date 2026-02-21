@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Surprise Envelope 💌</title>
+<title>Envelope Surprise 💌</title>
 <style>
 body {
   margin: 0;
@@ -16,80 +16,90 @@ body {
 }
 
 /* Envelope container */
-.envelope {
-  width: 280px;
-  height: 180px;
+.envelope-container {
   position: relative;
+  width: 250px;
+  height: 150px;
   cursor: pointer;
-  perspective: 600px;
+  perspective: 800px;
 }
 
 /* Envelope body */
-.envelope-body {
+.envelope {
   width: 100%;
   height: 100%;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+  background: #fff;
+  border-radius: 6px;
   position: relative;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.15);
   overflow: hidden;
 }
 
 /* Envelope flap */
 .flap {
   position: absolute;
-  top: -90px;
+  top: -75px;
   left: 0;
   width: 0;
   height: 0;
-  border-left: 140px solid transparent;
-  border-right: 140px solid transparent;
-  border-bottom: 90px solid #ff9ecf;
+  border-left: 125px solid transparent;
+  border-right: 125px solid transparent;
+  border-bottom: 75px solid #ff9ecf;
   transform-origin: top;
-  transition: 1s;
+  transition: transform 1s ease;
+  z-index: 2;
 }
 
-/* Paper inside */
-.paper {
-  position: absolute;
-  width: 240px;
-  height: 160px;
-  background: white;
-  top: 10px;
-  left: 20px;
-  border-radius: 8px;
-  padding: 15px;
-  box-sizing: border-box;
-  text-align: center;
-  transform: translateY(120px);
-  transition: 1s;
-  opacity: 0;
-  font-size: 14px;
-  line-height: 1.4;
-}
-
-/* Center heart when envelope closed */
+/* Heart in the center */
 .center-heart {
   position: absolute;
   top: 50%;
   left: 50%;
-  font-size: 40px;
+  font-size: 36px;
   transform: translate(-50%, -50%);
-  transition: 0.8s;
+  transition: transform 0.8s, opacity 0.8s;
+  z-index: 3;
   pointer-events: none;
+  animation: pulse 1.2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.2); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+/* Paper inside envelope */
+.paper {
+  position: absolute;
+  width: 220px;
+  height: 140px;
+  background: #fff;
+  top: 5px;
+  left: 15px;
+  border-radius: 6px;
+  padding: 15px;
+  box-sizing: border-box;
+  text-align: center;
+  transform: translateY(150px);
+  transition: transform 1s ease, opacity 1s ease;
+  opacity: 0;
+  font-size: 14px;
+  line-height: 1.4;
+  z-index: 1;
 }
 
 /* When envelope opens */
-.open .flap {
+.envelope-container.open .flap {
   transform: rotateX(180deg);
 }
-.open .paper {
-  transform: translateY(-140px);
-  opacity: 1;
-}
-.open .center-heart {
+.envelope-container.open .center-heart {
   transform: translate(-50%, -50%) scale(0);
   opacity: 0;
+}
+.envelope-container.open .paper {
+  transform: translateY(-20px);
+  opacity: 1;
 }
 
 /* Flying hearts */
@@ -103,6 +113,7 @@ body {
   from { transform: translateY(0); opacity: 1; }
   to { transform: translateY(-700px); opacity: 0; }
 }
+
 </style>
 </head>
 <body>
@@ -111,11 +122,11 @@ body {
   <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_7d1c6e2e0b.mp3" type="audio/mpeg">
 </audio>
 
-<div class="envelope" onclick="openEnvelope(this)">
-  <div class="envelope-body">
+<div class="envelope-container" onclick="openEnvelope(this)">
+  <div class="envelope">
     <div class="flap"></div>
-    <div class="paper" id="message"></div>
     <div class="center-heart">💖</div>
+    <div class="paper" id="message"></div>
   </div>
 </div>
 
@@ -126,6 +137,7 @@ function getName() {
 }
 
 function openEnvelope(el) {
+  if(el.classList.contains("open")) return; // prevent multiple clicks
   el.classList.add("open");
   document.getElementById("bgMusic").play();
 
@@ -133,13 +145,14 @@ function openEnvelope(el) {
   document.getElementById("message").innerHTML = `
     💌 For ${name}, <br><br>
     Surprise!!! 💖 <br><br>
-    Thank you for supporting me,
-    reacting to my stories,
-    and being part of my life. <br><br>
-    You are appreciated more than
+    Thank you for supporting me,<br>
+    reacting to my stories,<br>
+    and being part of my life.<br><br>
+    You are appreciated more than<br>
     you will ever know ✨
   `;
 
+  // Flying hearts
   for(let i=0; i<25; i++) {
     let heart = document.createElement("div");
     heart.className = "heart";
