@@ -11,8 +11,8 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
   font-family: 'Segoe UI', sans-serif;
+  overflow: hidden;
 }
 
 /* Envelope container */
@@ -24,49 +24,50 @@ body {
   perspective: 800px;
 }
 
-/* Envelope body */
-.envelope {
+/* Envelope body rectangle */
+.envelope-body {
+  position: absolute;
+  bottom: 0;
   width: 100%;
-  height: 100%;
+  height: 100px;
   background: #fff;
+  border: 2px solid #ff9ecf;
   border-radius: 6px;
-  position: relative;
-  box-shadow: 0 15px 30px rgba(0,0,0,0.15);
-  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  z-index: 1;
 }
 
-/* Envelope flap */
-.flap {
+/* Envelope flap triangle */
+.envelope-flap {
   position: absolute;
-  top: -75px;
+  top: 0;
   left: 0;
   width: 0;
   height: 0;
   border-left: 125px solid transparent;
   border-right: 125px solid transparent;
-  border-bottom: 75px solid #ff9ecf;
+  border-bottom: 80px solid #ff9ecf;
   transform-origin: top;
-  transition: transform 1s ease;
+  transition: transform 0.8s ease;
   z-index: 2;
 }
 
-/* Heart in the center */
-.center-heart {
+/* Center heart on envelope */
+.envelope-heart {
   position: absolute;
-  top: 50%;
+  top: 40px;
   left: 50%;
+  transform: translateX(-50%);
   font-size: 36px;
-  transform: translate(-50%, -50%);
-  transition: transform 0.8s, opacity 0.8s;
   z-index: 3;
   pointer-events: none;
   animation: pulse 1.2s infinite;
 }
 
 @keyframes pulse {
-  0% { transform: translate(-50%, -50%) scale(1); }
-  50% { transform: translate(-50%, -50%) scale(1.2); }
-  100% { transform: translate(-50%, -50%) scale(1); }
+  0% { transform: translateX(-50%) scale(1); }
+  50% { transform: translateX(-50%) scale(1.2); }
+  100% { transform: translateX(-50%) scale(1); }
 }
 
 /* Paper inside envelope */
@@ -74,9 +75,9 @@ body {
   position: absolute;
   width: 220px;
   height: 140px;
-  background: #fff;
   top: 5px;
   left: 15px;
+  background: #fff;
   border-radius: 6px;
   padding: 15px;
   box-sizing: border-box;
@@ -87,19 +88,6 @@ body {
   font-size: 14px;
   line-height: 1.4;
   z-index: 1;
-}
-
-/* When envelope opens */
-.envelope-container.open .flap {
-  transform: rotateX(180deg);
-}
-.envelope-container.open .center-heart {
-  transform: translate(-50%, -50%) scale(0);
-  opacity: 0;
-}
-.envelope-container.open .paper {
-  transform: translateY(-20px);
-  opacity: 1;
 }
 
 /* Flying hearts */
@@ -114,6 +102,18 @@ body {
   to { transform: translateY(-700px); opacity: 0; }
 }
 
+/* Open state */
+.envelope-container.open .envelope-flap {
+  transform: rotateX(180deg);
+}
+.envelope-container.open .envelope-heart {
+  transform: translateX(-50%) scale(0);
+  opacity: 0;
+}
+.envelope-container.open .paper {
+  transform: translateY(-20px);
+  opacity: 1;
+}
 </style>
 </head>
 <body>
@@ -123,11 +123,10 @@ body {
 </audio>
 
 <div class="envelope-container" onclick="openEnvelope(this)">
-  <div class="envelope">
-    <div class="flap"></div>
-    <div class="center-heart">💖</div>
-    <div class="paper" id="message"></div>
-  </div>
+  <div class="envelope-flap"></div>
+  <div class="envelope-body"></div>
+  <div class="envelope-heart">💖</div>
+  <div class="paper" id="message"></div>
 </div>
 
 <script>
@@ -137,7 +136,7 @@ function getName() {
 }
 
 function openEnvelope(el) {
-  if(el.classList.contains("open")) return; // prevent multiple clicks
+  if(el.classList.contains("open")) return;
   el.classList.add("open");
   document.getElementById("bgMusic").play();
 
@@ -152,7 +151,6 @@ function openEnvelope(el) {
     you will ever know ✨
   `;
 
-  // Flying hearts
   for(let i=0; i<25; i++) {
     let heart = document.createElement("div");
     heart.className = "heart";
