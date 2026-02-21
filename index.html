@@ -2,115 +2,204 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Picture Surprise 💖</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Magical Surprise 💖</title>
+
 <style>
-
-body {
-  margin: 0;
-  height: 100vh;
-  background: linear-gradient(135deg, #ffe4f0, #fff0f8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: 'Segoe UI', sans-serif;
-  overflow: hidden;
+body{
+  margin:0;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(135deg,#ffe4f0,#fff0f8);
+  overflow:hidden;
+  font-family:sans-serif;
 }
 
-/* Card */
-.card {
-  width: 90%;
-  max-width: 340px;
-  background: #fff;
-  border-radius: 20px;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.15);
-  padding: 15px;
-  transform: scale(0);
-  transition: transform 0.8s cubic-bezier(0.25, 1.5, 0.5, 1);
-  position: relative;
-  z-index: 10;
+.container{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
 }
 
-.card.show {
-  transform: scale(1);
-  animation: bounce 0.8s;
+.card{
+  width:90%;
+  max-width:340px;
+  background:white;
+  border-radius:20px;
+  padding:15px;
+  box-shadow:0 15px 40px rgba(0,0,0,0.15);
+  transform:scale(0);
+  opacity:0;
+  transition:0.6s cubic-bezier(.25,1.5,.5,1);
+  position:relative;
 }
 
-@keyframes bounce {
-  0% { transform: scale(0.8); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+.card.show{
+  transform:scale(1);
+  opacity:1;
 }
 
-/* Image container */
-.image-container {
-  position: relative;
-  width: 100%;
-  border-radius: 15px;
-  overflow: hidden;
+.image-container{
+  position:relative;
+  border-radius:15px;
+  overflow:hidden;
 }
 
-.image-container img {
-  width: 100%;
-  display: block;
-  border-radius: 15px;
+.image-container img{
+  width:100%;
+  display:block;
+  border-radius:15px;
 }
 
-/* Floating heart in center */
-.center-heart {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 40px;
-  animation: floatHeart 2s ease-in-out infinite;
-  pointer-events: none;
+/* Explosion hearts */
+.heart{
+  position:absolute;
+  pointer-events:none;
+  animation:explode 1.2s ease-out forwards;
 }
 
-@keyframes floatHeart {
-  0% { transform: translate(-50%, -50%) translateY(0); }
-  50% { transform: translate(-50%, -50%) translateY(-15px); }
-  100% { transform: translate(-50%, -50%) translateY(0); }
+@keyframes explode{
+  0%{
+    transform:translate(-50%,-50%) scale(0.5);
+    opacity:1;
+  }
+  100%{
+    transform:translate(var(--x),var(--y)) scale(1.4);
+    opacity:0;
+  }
 }
 
-/* Button */
-button {
-  margin-top: 20px;
-  padding: 12px 25px;
-  background: #ff7f91;
-  border: none;
-  border-radius: 12px;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
+/* Sparkles */
+.sparkle{
+  position:absolute;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:white;
+  box-shadow:0 0 12px #ff8fd6;
+  pointer-events:none;
+  animation:spark 1s ease-out forwards;
 }
 
-button:hover {
-  background: #ff4f6d;
+@keyframes spark{
+  0%{
+    transform:translate(-50%,-50%) scale(0.5);
+    opacity:1;
+  }
+  100%{
+    transform:translate(var(--x),var(--y)) scale(1.5);
+    opacity:0;
+  }
 }
 
+button{
+  margin-top:20px;
+  padding:12px 25px;
+  border:none;
+  background:#ff7f91;
+  color:white;
+  border-radius:12px;
+  cursor:pointer;
+  font-size:16px;
+}
+
+button:hover{
+  background:#ff4f6d;
+}
 </style>
 </head>
 <body>
 
-<div style="display:flex; flex-direction:column; align-items:center;">
-  
+<div class="container">
+
   <div class="card" id="card">
-    <div class="image-container">
-      <!-- Replace the image link below with your own picture -->
-      <img src="https://i.imgur.com/CXnfPcF.jpeg" alt="Surprise Image">
-      <div class="center-heart">💖</div>
+    <div class="image-container" id="imageBox">
+      <!-- PUT YOUR IMGUR DIRECT LINK BELOW -->
+      <img src="https://i.imgur.com/CXnfPcF.jpeg">
     </div>
   </div>
 
-  <button onclick="showCard()">Open Surprise</button>
+  <button onclick="openSurprise()">Open Surprise</button>
 
 </div>
 
 <script>
-function showCard() {
-  document.getElementById("card").classList.add("show");
+
+function openSurprise(){
+
+  const card = document.getElementById("card");
+  const box = document.getElementById("imageBox");
+
+  card.classList.add("show");
+
+  // Mobile vibration
+  if(navigator.vibrate){
+    navigator.vibrate([100,50,100]);
+  }
+
+  explodeHearts(box);
+  explodeSparkles(box);
 }
+
+function explodeHearts(container){
+
+  const colors = ["#ff4f6d","#ff7fa6","#ff2e63","#ff85a2"];
+
+  for(let i=0;i<25;i++){
+
+    let heart = document.createElement("div");
+    heart.className="heart";
+    heart.innerHTML="💖";
+
+    let size = 16 + Math.random()*30;
+    heart.style.fontSize=size+"px";
+    heart.style.color=colors[Math.floor(Math.random()*colors.length)];
+
+    heart.style.left="50%";
+    heart.style.top="50%";
+
+    let angle=Math.random()*2*Math.PI;
+    let radius=120+Math.random()*100;
+
+    let x=Math.cos(angle)*radius+"px";
+    let y=Math.sin(angle)*radius+"px";
+
+    heart.style.setProperty('--x',x);
+    heart.style.setProperty('--y',y);
+
+    container.appendChild(heart);
+
+    setTimeout(()=>heart.remove(),1200);
+  }
+}
+
+function explodeSparkles(container){
+
+  for(let i=0;i<20;i++){
+
+    let sparkle=document.createElement("div");
+    sparkle.className="sparkle";
+
+    sparkle.style.left="50%";
+    sparkle.style.top="50%";
+
+    let angle=Math.random()*2*Math.PI;
+    let radius=80+Math.random()*120;
+
+    let x=Math.cos(angle)*radius+"px";
+    let y=Math.sin(angle)*radius+"px";
+
+    sparkle.style.setProperty('--x',x);
+    sparkle.style.setProperty('--y',y);
+
+    container.appendChild(sparkle);
+
+    setTimeout(()=>sparkle.remove(),1000);
+  }
+}
+
 </script>
 
 </body>
